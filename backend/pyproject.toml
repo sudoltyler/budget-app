@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "budget-app-backend"
+description = "A Django SimpleFIN backend app."
+authors = [{ name = "Tyler Sudol", email = "sudol.tyler@gmail.com" }]
+version = "0.1.0"
+requires-python = ">= 3.12"
+dependencies = [
+    "django>=5.0.4",
+    "django-ninja>=1.3.0",
+    "django-cors-headers==4.3.1",
+    "httpx==0.27.0",
+    "python-dotenv==1.0.1",
+]
+[project.optional-dependencies]
+dev = ["pytest==8.2.0", "pytest-django==4.8.0"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["config*", "simplefin_app*"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+pythonpath = ["."]
