@@ -1,21 +1,40 @@
 from ninja import Router
 from ninja.errors import HttpError
+from ninja import Schema
+from datetime import datetime
+from decimal import Decimal
 
-from simplefin_app.models import SimpleFinConnection
-from simplefin_app.simplefin import fetch_accounts, SimpleFinError
+from simplefin_app.models import Account
 
 router = Router()
 
 
-@router.get("/")
+class TransactionOut(Schema):
+    id: int
+    simplefin_id: str
+    posted: datetime
+    amount: Decimal
+    description: str
+    payee: str
+    memo: str
+    category: str
+    pending: bool
+
+
+class AccountOut(Schema):
+    id: int
+    simplefin_id: str
+    name: str
+    currency: str
+    balance: Decimal
+    balance_date: datetime
+    last_synced: datetime
+    transactions: list[TransactionOut]
+
+
+@router.get("/", response=list[AccountOut])
 def list_accounts(request):
-    connection = SimpleFinConnection.objects.first()
-    if not connection:
-        raise HttpError(400, "No SimpleFIN connection configured yet")
-
-    try:
-        data = fetch_accounts(connection.access_url)
-    except SimpleFinError as e:
-        raise HttpError(502, str(e))
-
-    return data
+    accounts = Account.objects.prefetch_related("transactions").all()
+    if not accounts.exists():
+        raise HttpError(404, "No accounts found — try syncing first")
+    return accounts
