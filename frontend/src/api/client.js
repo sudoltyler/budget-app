@@ -26,3 +26,14 @@ export async function getAccounts() {
   }
   return res.json()
 }
+
+export async function syncAccounts() {
+  const res = await fetch(`${BASE_URL}/sync/`, {
+    method: 'POST',
+  })
+  if (!res.ok) {
+    const error = await res.json()
+    throw new Error(error.detail || 'Failed to sync')
+  }
+  return res.json()
+}
