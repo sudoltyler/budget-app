@@ -1,7 +1,9 @@
+.vscode/
+__pycache__/
+
 # backend
 */.venv/
 */dist/
-*/__pycache__/
 
 *.egg-info
 *.pyc
